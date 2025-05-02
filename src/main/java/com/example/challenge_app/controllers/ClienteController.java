@@ -3,7 +3,10 @@ package com.example.challenge_app.controllers;
 import com.example.challenge_app.commons.ClienteResponse;
 import com.example.challenge_app.commons.CreateClienteRequest;
 import com.example.challenge_app.commons.WrapperResponse;
+import com.example.challenge_app.dto.Metricas;
 import com.example.challenge_app.services.ClienteService;
+import com.example.challenge_app.services.MetricsService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,9 +26,11 @@ import java.util.List;
 public class ClienteController {
 
     private final ClienteService clienteService;
+    private final MetricsService metricsService;
 
-    public ClienteController(ClienteService clienteService) {
+    public ClienteController(ClienteService clienteService, MetricsService metricsService) {
         this.clienteService = clienteService;
+        this.metricsService = metricsService;
     }
 
     @Operation(summary = "Api para la creacion de un nuevo cliente", security = @SecurityRequirement(name = "basicAuth"))
@@ -37,10 +42,20 @@ public class ClienteController {
     }
 
     @Operation(summary = "Api para obtener todos los clientes", security = @SecurityRequirement(name = "basicAuth"))
-    @GetMapping(value = "/get-all")
+    @GetMapping( "/get-all")
     public ResponseEntity<WrapperResponse<List<ClienteResponse>>> getAll() {
         WrapperResponse<List<ClienteResponse>> response = new WrapperResponse();
         response.setApiResponse(clienteService.getAllClientes());
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/metricas")
+    public ResponseEntity<WrapperResponse<Metricas>> getMetricas() throws JsonProcessingException {
+        WrapperResponse<Metricas> response = new WrapperResponse();
+        List<ClienteResponse> clientes = clienteService.getAllClientes();
+        Metricas metricas = new Metricas(metricsService.calculateAverageAge(clientes),
+                metricsService.calculateStandardDeviation(clientes));
+        response.setApiResponse(metricas);
         return ResponseEntity.ok(response);
     }
 }

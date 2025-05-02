@@ -3,6 +3,8 @@ package com.example.challenge_app.services;
 import com.example.challenge_app.commons.ClienteResponse;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -16,8 +18,8 @@ public class MetricsService {
         return total / allClientes.size();
     }
 
-    public Integer calculateStandardDeviation(List<ClienteResponse> allClientes) {
-        int sd;
+    public Double calculateStandardDeviation(List<ClienteResponse> allClientes) {
+        double sd;
         double dif;
         double sumDif = 0;
         int average = this.calculateAverageAge(allClientes);
@@ -26,7 +28,7 @@ public class MetricsService {
             dif = Math.pow(average - client.getEdad(),2);
             sumDif += dif;
         }
-        sd = (int) Math.sqrt(sumDif/allClientes.size());
+        sd =  new BigDecimal(Math.sqrt(sumDif/allClientes.size())).setScale(2, RoundingMode.DOWN).doubleValue();
         return sd;
     }
 }
