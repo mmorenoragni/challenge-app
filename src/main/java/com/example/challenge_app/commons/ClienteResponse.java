@@ -54,4 +54,15 @@ public class ClienteResponse {
     public Map<String, Object> getInformacionExtra() {
         return informacionExtra;
     }
+
+    @Override
+    public String toString() {
+        return "ClienteResponse{" +
+                "nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", edad=" + edad +
+                ", informacionExtra=" + informacionExtra +
+                ", fechaNacimiento=" + fechaNacimiento +
+                '}';
+    }
 }

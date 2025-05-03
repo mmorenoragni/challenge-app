@@ -4,6 +4,7 @@ import com.example.challenge_app.commons.ClienteResponse;
 import com.example.challenge_app.commons.CreateClienteRequest;
 import com.example.challenge_app.commons.WrapperResponse;
 import com.example.challenge_app.dto.Metricas;
+import com.example.challenge_app.events.EmailSenderEventPublisher;
 import com.example.challenge_app.services.ClienteService;
 import com.example.challenge_app.services.MetricsService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -27,17 +28,23 @@ public class ClienteController {
 
     private final ClienteService clienteService;
     private final MetricsService metricsService;
+    private final EmailSenderEventPublisher emailSenderEventPublisher;
 
-    public ClienteController(ClienteService clienteService, MetricsService metricsService) {
+    public ClienteController(ClienteService clienteService,
+                             MetricsService metricsService,
+                             EmailSenderEventPublisher emailSenderEventPublisher) {
         this.clienteService = clienteService;
         this.metricsService = metricsService;
+        this.emailSenderEventPublisher = emailSenderEventPublisher;
     }
 
     @Operation(summary = "Api para la creacion de un nuevo cliente", security = @SecurityRequirement(name = "basicAuth"))
     @PostMapping()
     public ResponseEntity<WrapperResponse<ClienteResponse>> create(@Valid @RequestBody CreateClienteRequest request) {
         WrapperResponse<ClienteResponse> response = new WrapperResponse();
-        response.setApiResponse(clienteService.createCliente(request));
+        ClienteResponse clienteResponse = clienteService.createCliente(request);
+        response.setApiResponse(clienteResponse);
+        emailSenderEventPublisher.publishEmailSenderEvent("creation of user %s".formatted(clienteResponse.toString()));
         return ResponseEntity.ok(response);
     }
 
