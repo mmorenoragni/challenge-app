@@ -3,6 +3,7 @@ package com.example.challenge_app.commons;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 
 import java.time.LocalDate;
 
@@ -16,6 +17,7 @@ public class CreateClienteRequest {
 
     @NotNull(message = "Fecha de nacimiento no puede ser nulo")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyy")
+    @PastOrPresent
     private LocalDate fechaNacimiento;
 
     public String getNombre() {
