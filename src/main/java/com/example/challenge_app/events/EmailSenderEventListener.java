@@ -10,6 +10,9 @@ public class EmailSenderEventListener implements ApplicationListener<EmailSender
     private static final Logger logger = LoggerFactory.getLogger(EmailSenderEventListener.class);
 
     @Override
+    /*
+        the Event represent the email sending action, the thread sleep is just to demonstrate the event is asynchronous
+     */
     public void onApplicationEvent(EmailSenderEvent event) {
         try {
             Thread.sleep(10000);
