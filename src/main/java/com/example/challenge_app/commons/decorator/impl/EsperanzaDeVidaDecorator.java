@@ -18,11 +18,29 @@ public class EsperanzaDeVidaDecorator implements IClienteResponseDecorator {
     @Override
     public void decorate(ClienteResponse cliente) {
         cliente.setEdad((int) ChronoUnit.YEARS.between(cliente.getFechaNacimiento(), LocalDate.now()));
-        int coeficienteDeEdad = (new Random().nextInt(10) * cliente.getEdad()) / 10;
-        int esperanzaDeVida = Math.round(coeficienteDeEdad + cliente.getEdad());
+        int esperanzaDeVida = Math.round(coeficienteDeEdad(cliente.getEdad()) + cliente.getEdad());
         cliente.getInformacionExtra().put("esperanzaDeVida", esperanzaDeVida);
         if (clienteDecorator != null) {
             clienteDecorator.decorate(cliente);
         }
+    }
+
+    private long coeficienteDeEdad(int edadActual) {
+        if (edadActual > 0 && edadActual <= 20) {
+            return Math.round(2.7 * edadActual);
+        }
+
+        if (edadActual > 20 && edadActual <= 30) {
+            return Math.round(2.5 * edadActual);
+        }
+
+        if (edadActual > 30 && edadActual <= 50) {
+            return Math.round(1.5 * edadActual);
+        }
+        if (edadActual > 60) {
+            return Math.round(0.5 * edadActual);
+        }
+
+        return 0;
     }
 }
